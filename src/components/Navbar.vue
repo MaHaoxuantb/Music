@@ -174,27 +174,41 @@ export default {
 <style lang="scss" scoped>
 nav {
   position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
+  top: 12px; // float below the top edge
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: min(1100px, calc(100% - 120px)); // centered, with side gutters
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 64px;
-  padding: {
-    right: 10vw;
-    left: 10vw;
-  }
+  height: 56px;
+  padding: 0 16px;
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
   backdrop-filter: saturate(180%) blur(20px);
 
   background-color: var(--color-navbar-bg);
-  z-index: 100;
+  z-index: 1000; // above content and player
   -webkit-app-region: drag;
 }
 
 @media (max-width: 1336px) {
   nav {
-    padding: 0 max(5vw, 90px);
+    width: min(1000px, calc(100% - 80px));
+  }
+}
+
+// On small screens, keep it full-width at the top to save space
+@media (max-width: 760px) {
+  nav {
+    left: 0;
+    right: 0;
+    transform: none;
+    width: 100%;
+    border-radius: 0;
+    top: 0;
+    padding: 0 max(5vw, 16px);
   }
 }
 
@@ -206,6 +220,7 @@ nav {
 
 nav.has-custom-titlebar {
   padding-top: 20px;
+  top: 40px; // account for custom titlebar height
   -webkit-app-region: no-drag;
 }
 
@@ -221,6 +236,14 @@ nav.has-custom-titlebar {
     -webkit-app-region: no-drag;
   }
 }
+
+// Ensure all interactive groups are not draggable in Electron
+nav .navigation-buttons,
+nav .navigation-links,
+nav .right-part {
+  -webkit-app-region: no-drag;
+}
+
 @media (max-width: 970px) {
   .navigation-buttons {
     flex: unset;

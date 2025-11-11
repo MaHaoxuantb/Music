@@ -122,14 +122,23 @@ main {
   right: 0;
   left: 0;
   overflow: auto;
-  padding: 64px 10vw 96px 10vw;
+  // add extra top padding to clear the floating navbar (64px height + 40px gap)
+  padding: 104px 10vw 96px 10vw;
   box-sizing: border-box;
   scrollbar-width: none; // firefox
 }
 
 @media (max-width: 1336px) {
   main {
-    padding: 64px 5vw 96px 5vw;
+    padding: 104px 5vw 96px 5vw;
+  }
+}
+
+// On small screens where the navbar becomes full-width and sticks to the top,
+// revert to the original top padding equal to the navbar height.
+@media (max-width: 760px) {
+  main {
+    padding-top: 64px;
   }
 }
 
