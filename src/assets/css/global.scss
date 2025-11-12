@@ -46,6 +46,12 @@
   --color-primary-bg-for-transparent: rgba(189, 207, 255, 0.28);
   --color-secondary-bg-for-transparent: rgba(209, 209, 214, 0.28);
   --html-overflow-y: overlay;
+  --app-sidebar-width: clamp(320px, 20vw, 560px);
+  --app-sidebar-offset: 0px;
+}
+
+:root.sidebar-open {
+  --app-sidebar-offset: var(--app-sidebar-width);
 }
 
 [data-theme='dark'] {

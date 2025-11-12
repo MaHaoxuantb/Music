@@ -683,13 +683,14 @@ export default {
 .lyrics-page {
   position: fixed;
   top: 0;
-  right: 0;
+  right: var(--app-sidebar-offset, 0);
   left: 0;
   bottom: 0;
   z-index: 200;
   background: var(--color-body-bg);
   display: flex;
   clip: rect(auto, auto, auto, auto);
+  transition: right 0.35s ease;
 }
 
 .lyrics-background {

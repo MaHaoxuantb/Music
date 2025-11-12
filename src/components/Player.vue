@@ -318,7 +318,7 @@ export default {
 .player {
   position: fixed;
   bottom: 0;
-  right: 0;
+  right: var(--app-sidebar-offset, 0);
   left: 0;
   display: flex;
   flex-direction: column;
@@ -328,6 +328,7 @@ export default {
   // background-color: rgba(255, 255, 255, 0.86);
   background-color: var(--color-navbar-bg);
   z-index: 100;
+  transition: right 0.35s ease;
 }
 
 @supports (-moz-appearance: none) {

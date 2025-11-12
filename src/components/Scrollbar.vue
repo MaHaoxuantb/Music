@@ -153,11 +153,12 @@ export default {
 <style lang="scss" scoped>
 #scrollbar {
   position: fixed;
-  right: 0;
+  right: var(--app-sidebar-offset, 0);
   top: 0;
   bottom: 0;
   width: 16px;
   z-index: 1000;
+  transition: right 0.35s ease;
 
   #thumbContainer {
     margin-top: 64px;
