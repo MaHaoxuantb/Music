@@ -206,7 +206,7 @@ nav {
   border: 2px solid rgba(140, 140, 140, 0.3);
 
   background-color: var(--color-navbar-bg);
-  z-index: 2000; // above content, player, and sidebar
+  z-index: 900; // above content, player, and sidebar
   -webkit-app-region: drag;
 }
 

@@ -309,7 +309,7 @@ main::-webkit-scrollbar {
   right: 0;
   width: var(--app-sidebar-width);
   background-color: var(--color-body-bg);
-  z-index: 1200;
+  z-index: 500;
   display: flex;
   flex-direction: column;
   padding: 104px 24px 96px;
