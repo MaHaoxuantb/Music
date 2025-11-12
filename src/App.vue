@@ -182,7 +182,7 @@ export default {
       if (typeof window === 'undefined' || !window.matchMedia) return;
       this.sidebarMediaQuery = window.matchMedia('(max-width: 760px)');
       this.isPhoneViewport = this.sidebarMediaQuery.matches;
-      this.sidebarMediaHandler = (event) => {
+      this.sidebarMediaHandler = event => {
         this.isPhoneViewport = event.matches;
       };
       if (this.sidebarMediaQuery.addEventListener) {
