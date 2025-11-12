@@ -185,7 +185,7 @@ nav {
   height: 56px;
   padding: 0 16px;
   border-radius: 24px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 8px 24px rgba(112, 112, 112, 0.20);
   backdrop-filter: saturate(180%) blur(20px);
 
   background-color: var(--color-navbar-bg);
