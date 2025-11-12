@@ -49,6 +49,16 @@
           @click="showUserProfileMenu"
           loading="lazy"
         />
+        <button
+          class="sidebar-toggle"
+          :class="{ open: sidebarOpen }"
+          :aria-pressed="sidebarOpen ? 'true' : 'false'"
+          aria-label="Toggle sidebar"
+          @click="$emit('toggle-sidebar')"
+        >
+          <svg-icon icon-class="menu-burger" class="icon icon--menu" />
+          <svg-icon icon-class="cross" class="icon icon--cross" />
+        </button>
       </div>
     </nav>
 
@@ -89,6 +99,12 @@ import ButtonIcon from '@/components/ButtonIcon.vue';
 
 export default {
   name: 'Navbar',
+  props: {
+    sidebarOpen: {
+      type: Boolean,
+      default: false,
+    },
+  },
   components: {
     Win32Titlebar,
     LinuxTitlebar,
@@ -174,7 +190,7 @@ export default {
 <style lang="scss" scoped>
 nav {
   position: fixed;
-  top: 12px; // float below the top edge
+  top: 18px; // float below the top edge
   left: 50%;
   right: auto;
   transform: translateX(-50%);
@@ -182,14 +198,15 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 56px;
-  padding: 0 16px;
+  height: 52px;
+  padding: 0 12px;
   border-radius: 24px;
-  box-shadow: 0 8px 24px rgba(112, 112, 112, 0.2);
+  box-shadow: 0 8px 24px rgba(112, 112, 112, 0.16);
   backdrop-filter: saturate(180%) blur(20px);
+  border: 2px solid rgba(140, 140, 140, 0.3);
 
   background-color: var(--color-navbar-bg);
-  z-index: 1000; // above content and player
+  z-index: 2000; // above content, player, and sidebar
   -webkit-app-region: drag;
 }
 
@@ -351,6 +368,7 @@ nav .right-part {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 8px;
   .avatar {
     user-select: none;
     height: 30px;
@@ -367,6 +385,47 @@ nav .right-part {
   .search-button {
     display: none;
     -webkit-app-region: no-drag;
+  }
+  .sidebar-toggle {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border-radius: 14px;
+    background: var(--color-secondary-bg-for-transparent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.25s ease, transform 0.25s ease;
+    margin-left: 12px;
+    -webkit-app-region: no-drag;
+    &:hover {
+      background: var(--color-primary-bg-for-transparent);
+    }
+    &:active {
+      transform: scale(0.94);
+    }
+    .icon {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      color: var(--color-text);
+      transition: opacity 0.2s ease, transform 0.3s ease;
+    }
+    .icon--cross {
+      opacity: 0;
+      transform: rotate(-90deg) scale(0.7);
+    }
+    &.open {
+      background: var(--color-primary-bg-for-transparent);
+      .icon--menu {
+        opacity: 0;
+        transform: rotate(90deg) scale(0.7);
+      }
+      .icon--cross {
+        opacity: 1;
+        transform: rotate(0) scale(1);
+      }
+    }
   }
 }
 </style>
