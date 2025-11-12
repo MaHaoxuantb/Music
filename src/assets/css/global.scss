@@ -55,8 +55,7 @@
 
 :root.sidebar-open {
   --app-sidebar-offset: calc(
-    var(--app-sidebar-width) +
-      var(--app-sidebar-padding-inline) * 2 +
+    var(--app-sidebar-width) + var(--app-sidebar-padding-inline) * 2 +
       var(--app-sidebar-border-left-width)
   );
   --app-main-padding-x: 6vw;
