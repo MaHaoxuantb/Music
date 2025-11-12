@@ -158,7 +158,7 @@ export default {
       this.$router.push({ name: 'settings' });
     },
     toGitHub() {
-      window.open('https://github.com/qier222/YesPlayMusic');
+      window.open('https://github.com/MaHaoxuantb/Music');
     },
     toLogin() {
       if (process.env.IS_ELECTRON === true) {
@@ -185,7 +185,7 @@ nav {
   height: 56px;
   padding: 0 16px;
   border-radius: 24px;
-  box-shadow: 0 8px 24px rgba(112, 112, 112, 0.20);
+  box-shadow: 0 8px 24px rgba(112, 112, 112, 0.2);
   backdrop-filter: saturate(180%) blur(20px);
 
   background-color: var(--color-navbar-bg);
