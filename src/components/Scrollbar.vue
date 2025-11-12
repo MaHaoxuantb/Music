@@ -5,6 +5,7 @@
         v-show="show"
         id="scrollbar"
         :class="{ 'on-drag': isOnDrag }"
+        :style="{ right: sidebarOffset }"
         @click="handleClick"
       >
         <div
@@ -26,6 +27,12 @@
 <script>
 export default {
   name: 'Scrollbar',
+  props: {
+    sidebarOffset: {
+      type: String,
+      default: '0px',
+    },
+  },
   data() {
     return {
       top: 0,

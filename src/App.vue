@@ -1,6 +1,10 @@
 <template>
   <div id="app" :class="{ 'user-select-none': userSelectNone }">
-    <Scrollbar v-show="!showLyrics" ref="scrollbar" />
+    <Scrollbar
+      v-show="!showLyrics"
+      ref="scrollbar"
+      :sidebar-offset="scrollbarOffset"
+    />
     <Navbar
       v-show="showNavbar"
       ref="navbar"
@@ -79,6 +83,7 @@ export default {
       sidebarMediaQuery: null,
       sidebarMediaHandler: null,
       htmlOverflowBeforeSidebar: null,
+      sidebarWidthValue: '0px',
     };
   },
   computed: {
@@ -112,6 +117,37 @@ export default {
         'app-sidebar-wrapper--inline': !this.isPhoneViewport,
       };
     },
+    scrollbarOffset() {
+      if (!this.isSidebarOpen || this.isPhoneViewport) return '0px';
+      return this.sidebarWidthValue || '0px';
+    },
+  },
+  watch: {
+    $route() {
+      if (this.isPhoneViewport) this.closeSidebar();
+    },
+    isSidebarOpen(isOpen) {
+      if (typeof document === 'undefined') return;
+      if (!this.htmlOverflowBeforeSidebar) {
+        this.cacheHtmlOverflowValue();
+      }
+      document.documentElement.style.setProperty(
+        '--html-overflow-y',
+        isOpen && this.isPhoneViewport
+          ? 'hidden'
+          : this.htmlOverflowBeforeSidebar
+      );
+      this.updateRootSidebarClass(isOpen);
+      this.applySidebarOffset(isOpen);
+    },
+    isPhoneViewport(isPhone) {
+      if (isPhone && this.isSidebarOpen) {
+        this.isSidebarOpen = false;
+        return;
+      }
+      this.updateRootSidebarClass(this.isSidebarOpen);
+      this.applySidebarOffset(this.isSidebarOpen);
+    },
   },
   created() {
     if (this.isElectron) ipcRenderer(this);
@@ -122,10 +158,14 @@ export default {
     this.cacheHtmlOverflowValue();
     this.setupSidebarMediaWatcher();
     this.initializeSidebarState();
+    this.updateSidebarWidthValue();
+    window.addEventListener('resize', this.updateSidebarWidthValue);
   },
   beforeDestroy() {
     this.removeSidebarMediaWatcher();
     this.restoreHtmlOverflowValue();
+    window.removeEventListener('resize', this.updateSidebarWidthValue);
+    this.applySidebarOffset(false);
     this.updateRootSidebarClass(false);
   },
   methods: {
@@ -208,11 +248,26 @@ export default {
       this.sidebarMediaHandler = null;
     },
     initializeSidebarState() {
-      if (this.isPhoneViewport) {
-        this.isSidebarOpen = false;
-      } else {
-        this.isSidebarOpen = true;
-      }
+      this.isSidebarOpen = false;
+      this.updateRootSidebarClass(false);
+    },
+    updateSidebarWidthValue() {
+      if (typeof window === 'undefined') return;
+      const min = 320;
+      const max = 560;
+      const vwWidth = window.innerWidth * 0.2;
+      const width = Math.min(Math.max(min, vwWidth), max);
+      const rootStyle = getComputedStyle(document.documentElement);
+      const parsePxValue = value => parseFloat(value) || 0;
+      const horizontalPadding = parsePxValue(
+        rootStyle.getPropertyValue('--app-sidebar-padding-inline')
+      );
+      const borderLeftWidth = parsePxValue(
+        rootStyle.getPropertyValue('--app-sidebar-border-left-width')
+      );
+      const totalSidebarWidth = width + horizontalPadding * 2 + borderLeftWidth;
+      this.sidebarWidthValue = `${totalSidebarWidth}px`;
+      this.applySidebarOffset(this.isSidebarOpen);
     },
     updateRootSidebarClass(isOpen) {
       if (typeof document === 'undefined') return;
@@ -224,32 +279,11 @@ export default {
         root.classList.remove('sidebar-open');
       }
     },
-  },
-  watch: {
-    $route() {
-      if (this.isPhoneViewport) this.closeSidebar();
-    },
-    isSidebarOpen(isOpen) {
+    applySidebarOffset(isOpen) {
       if (typeof document === 'undefined') return;
-      if (!this.htmlOverflowBeforeSidebar) {
-        this.cacheHtmlOverflowValue();
-      }
-      document.documentElement.style.setProperty(
-        '--html-overflow-y',
-        isOpen && this.isPhoneViewport
-          ? 'hidden'
-          : this.htmlOverflowBeforeSidebar
-      );
-      this.updateRootSidebarClass(isOpen);
-    },
-    isPhoneViewport(isPhone) {
-      if (isPhone && this.isSidebarOpen) {
-        this.isSidebarOpen = false;
-      } else if (!isPhone && !this.isSidebarOpen) {
-        this.isSidebarOpen = true;
-      } else {
-        this.updateRootSidebarClass(this.isSidebarOpen);
-      }
+      const value =
+        isOpen && !this.isPhoneViewport ? this.sidebarWidthValue : '0px';
+      document.documentElement.style.setProperty('--app-sidebar-offset', value);
     },
   },
 };
@@ -269,23 +303,17 @@ main {
   left: 0;
   overflow: auto;
   // add extra top padding to clear the floating navbar (64px height + 40px gap)
-  padding: 104px 10vw 96px 10vw;
+  padding: 104px var(--app-main-padding-x) 96px var(--app-main-padding-x);
   box-sizing: border-box;
   scrollbar-width: none; // firefox
   transition: right 0.35s ease;
-}
-
-@media (max-width: 1336px) {
-  main {
-    padding: 104px 5vw 96px 5vw;
-  }
 }
 
 // On small screens where the navbar becomes full-width and sticks to the top,
 // revert to the original top padding equal to the navbar height.
 @media (max-width: 760px) {
   main {
-    padding-top: 64px;
+    padding: 64px var(--app-main-padding-x) 96px var(--app-main-padding-x);
   }
 }
 
@@ -309,11 +337,12 @@ main::-webkit-scrollbar {
   right: 0;
   width: var(--app-sidebar-width);
   background-color: var(--color-body-bg);
-  z-index: 500;
+  z-index: 600;
   display: flex;
   flex-direction: column;
-  padding: 104px 24px 96px;
-  border-left: 2px solid rgba(140, 140, 140, 0.2);
+  padding: 104px var(--app-sidebar-padding-inline) 96px;
+  border-left: var(--app-sidebar-border-left-width) solid
+    rgba(140, 140, 140, 0.2);
 }
 
 .app-sidebar-wrapper--sheet {

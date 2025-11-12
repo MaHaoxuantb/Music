@@ -48,10 +48,18 @@
   --html-overflow-y: overlay;
   --app-sidebar-width: clamp(320px, 20vw, 560px);
   --app-sidebar-offset: 0px;
+  --app-sidebar-padding-inline: 24px;
+  --app-sidebar-border-left-width: 2px;
+  --app-main-padding-x: 10vw;
 }
 
 :root.sidebar-open {
-  --app-sidebar-offset: var(--app-sidebar-width);
+  --app-sidebar-offset: calc(
+    var(--app-sidebar-width) +
+      var(--app-sidebar-padding-inline) * 2 +
+      var(--app-sidebar-border-left-width)
+  );
+  --app-main-padding-x: 6vw;
 }
 
 [data-theme='dark'] {
@@ -138,4 +146,20 @@ a {
 
 .user-select-none {
   user-select: none;
+}
+
+@media (max-width: 1336px) {
+  :root {
+    --app-main-padding-x: 5vw;
+  }
+  :root.sidebar-open {
+    --app-main-padding-x: 3vw;
+  }
+}
+
+@media (max-width: 760px) {
+  :root,
+  :root.sidebar-open {
+    --app-main-padding-x: 24px;
+  }
 }
